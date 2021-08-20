@@ -75,14 +75,29 @@ JOIN film_actor fa2
 ON fa1.actor_id <> fa2.actor_id AND fa1.film_id = fa2.film_id;
 
 -- 8.  Get all pairs of customers that have rented the same film more than 3 times.
-SELECT r1.inventory_id, r1.customer_id, r2.customer_id 
+SELECT i.film_id, r1.inventory_id, r1.customer_id, r2.customer_id 
 FROM rental r1
 JOIN rental r2
 ON r1.customer_id <> r2.customer_id AND r1.inventory_id = r2.inventory_id
+JOIN inventory i
+ON r1.inventory_id = i.inventory_id
 GROUP BY r1.inventory_id
-HAVING count(r1.inventory_id)>3;
+HAVING count(i.film_id)>3
+ORDER BY i.film_id asc;
 
 -- 9.  For each film, list actor that has acted in more films.
+SELECT title as film, concat(first_name,' ', last_name) as actor
+FROM film_actor fa
+JOIN film f
+ON fa.film_id =  f.film_id
+JOIN actor a
+ON fa.actor_id = a.actor_id
+GROUP BY f.film_id 
+HAVING count(fa.film_id) > 1
+ORDER BY film asc;
+
+
+
 
 
 
