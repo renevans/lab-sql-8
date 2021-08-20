@@ -86,6 +86,8 @@ HAVING count(i.film_id)>3
 ORDER BY i.film_id asc;
 
 -- 9.  For each film, list actor that has acted in more films.
+#Assumption: Provide the following: for each film, a list of actors that acted in multiple films (i.e. more than one).
+
 SELECT title as film, concat(first_name,' ', last_name) as actor
 FROM film_actor fa
 JOIN film f
