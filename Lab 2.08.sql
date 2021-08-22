@@ -69,18 +69,45 @@ WHERE return_date is not null AND inventory_id <= 4;
 -- Yes, it is available.
 
 -- 7.  Get all pairs of actors that worked together.
+-- V1:
+
 SELECT fa1.film_id, fa1.actor_id, fa2.actor_id
 FROM film_actor fa1
 JOIN film_actor fa2
 ON fa1.actor_id <> fa2.actor_id AND fa1.film_id = fa2.film_id;
 
+-- V2: 
+SELECT fa1.film_id, fa1.actor_id, fa2.actor_id, concat(a.first_name,' ', a.last_name) AS first_actor, concat(b.first_name,' ', b.last_name) AS second_actor
+FROM film_actor fa1
+JOIN film_actor fa2
+ON fa1.actor_id <> fa2.actor_id AND fa1.film_id = fa2.film_id
+JOIN actor a
+ON fa1.actor_id = a.actor_id
+JOIN actor b
+ON fa2.actor_id = b.actor_id;
+
 -- 8.  Get all pairs of customers that have rented the same film more than 3 times.
+
+-- V1: 
 SELECT i.film_id, r1.inventory_id, r1.customer_id, r2.customer_id 
 FROM rental r1
 JOIN rental r2
 ON r1.customer_id <> r2.customer_id AND r1.inventory_id = r2.inventory_id
 JOIN inventory i
 ON r1.inventory_id = i.inventory_id
+GROUP BY r1.inventory_id
+HAVING count(i.film_id)>3
+ORDER BY i.film_id asc;
+
+-- V2:
+SELECT i.film_id, title, r1.inventory_id, r1.customer_id as first_customer, r2.customer_id as second_customer
+FROM rental r1
+JOIN rental r2
+ON r1.customer_id <> r2.customer_id AND r1.inventory_id = r2.inventory_id
+JOIN inventory i
+ON r1.inventory_id = i.inventory_id
+JOIN film f
+ON i.film_id = f.film_id
 GROUP BY r1.inventory_id
 HAVING count(i.film_id)>3
 ORDER BY i.film_id asc;
